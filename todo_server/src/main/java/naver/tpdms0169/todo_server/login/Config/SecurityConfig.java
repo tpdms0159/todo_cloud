@@ -1,5 +1,6 @@
 package naver.tpdms0169.todo_server.login.Config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import naver.tpdms0169.todo_server.login.filter.JWTFilter;
 import naver.tpdms0169.todo_server.login.filter.LoginFilter;
 import naver.tpdms0169.todo_server.login.jwt.JWTUtil;
@@ -14,6 +15,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.server.ServerWebExchange;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -39,6 +46,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+
         // csrf disable
         http.csrf((auth) -> auth.disable());
 
@@ -51,6 +59,7 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/login", "/join").permitAll()
+                .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated());
 
         // filter 추가 LoginFilter() 는 인자를 받음
@@ -64,6 +73,28 @@ public class SecurityConfig {
         // 세션 설정
         http.sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+
+        http
+                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        return configuration;
+                    }
+                })));
+
 
         return http.build();
 

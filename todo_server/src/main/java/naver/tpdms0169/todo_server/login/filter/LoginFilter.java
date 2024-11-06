@@ -53,14 +53,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // role 가져오기
         String role = auth.getAuthority();
-        String token = jwtUtil.createJwt(username, role, 60*60*10L);
+        String token = jwtUtil.createJwt(username, role, (long) 60*60*24*7);
         response.addHeader("Authorization", "Bearer " + token);
 
     }
-
+//
 //    @Override
 //    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-//
 //        //로그인 실패시 401 응답 코드 반환
 //        response.setStatus(401);
 //    }
