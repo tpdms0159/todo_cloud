@@ -16,13 +16,9 @@ public class JWTUtil {
 
     public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-        System.out.println(secret);
     }
 
     public String getUsername(String token) {
-
-        System.out.println(token);
-
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
@@ -33,14 +29,10 @@ public class JWTUtil {
 
     public Boolean isExpired(String token) {
 
-        System.out.println("token:" + token );
-        System.out.println("secretkey:" + secretKey );
-
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
     public String createJwt(String username, String role, Long expiredMs) {
-        System.out.println("create: "+ secretKey);
 
         return Jwts.builder()
                 .claim("username", username)

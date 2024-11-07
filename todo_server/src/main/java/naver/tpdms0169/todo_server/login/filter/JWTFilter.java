@@ -29,15 +29,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //request에서 Authorization 헤더를 찾음
         String authorization= request.getHeader("Authorization");
+        String requestUsername = request.getParameter("username");
+        System.out.println("request user:" + requestUsername);
 
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-
-            System.out.println("token null");
+            System.out.println("Authorization header not present");
             filterChain.doFilter(request, response);
+            return;
 
             //조건이 해당되면 메소드 종료 (필수)
-            return;
         }
 
         String token = authorization.split(" ")[1];
@@ -47,14 +48,30 @@ public class JWTFilter extends OncePerRequestFilter {
 
             System.out.println("token expired");
             filterChain.doFilter(request, response);
+            return;
+//            try {
+//                filterChain.doFilter(request, response);
+//                return;
+//            } catch (ServletException e) {
+//                System.out.println(e);
+//                return;
+//            }
 
             //조건이 해당되면 메소드 종료 (필수)
-            return;
         }
 
 
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
+
+        System.out.println("username:" + username);
+        // 해당 유저에 일치하는 토큰이 아닌 경우 처리
+        if (!username.equals(requestUsername)) {
+            response.setStatus(401);
+            response.setHeader("If-None-Match", "user is not match");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
@@ -62,12 +79,16 @@ public class JWTFilter extends OncePerRequestFilter {
         userEntity.setRole(role);
 
         CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
-
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-
         SecurityContextHolder.getContext().setAuthentication(authToken);
+        try {
+            filterChain.doFilter(request, response);
+            System.out.println("token success");
+        }catch (Exception e) {
+            System.out.println(e);
+            System.out.println("token failed");
 
-        filterChain.doFilter(request, response);
+        }
     }
 }
 

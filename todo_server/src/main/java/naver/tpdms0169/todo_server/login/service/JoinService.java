@@ -16,13 +16,17 @@ public class JoinService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public UserEntity JoinProcess (JoinDTO joinDTO) {
+    public String JoinProcess (JoinDTO joinDTO) {
+        // username 또는 password 값이 없는 경우
+        if (joinDTO.getUsername() == null || joinDTO.getPassword() == null) {
+            return "request username and password";
+        }
         String username = joinDTO.getUsername();
 
         Boolean isExist = userRepository.existsByUsername(username);
         // 중복되는 username 존재 시 종료
         if (isExist) {
-            return null;
+            return "user is already exist";
         }
 
         UserEntity data = new UserEntity();
@@ -31,6 +35,11 @@ public class JoinService {
         data.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
         data.setRole("ROLE_ADMIN");
 
-        return userRepository.save(data);
+        try{
+            userRepository.save(data);
+            return "join success";
+        } catch (Exception e) {
+            return "join failed";
+        }
     }
 }

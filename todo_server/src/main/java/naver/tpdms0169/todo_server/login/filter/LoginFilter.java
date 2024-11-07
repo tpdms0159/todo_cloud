@@ -1,17 +1,24 @@
 package naver.tpdms0169.todo_server.login.filter;
 
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import naver.tpdms0169.todo_server.login.DTO.CustomUserDetails;
 import naver.tpdms0169.todo_server.login.jwt.JWTUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.naming.AuthenticationException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -36,13 +43,24 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
 
         //token에 담은 검증을 위한 AuthenticationManager로 전달
-        return authenticationManager.authenticate(authToken);
+        try{
+            Authentication auth = authenticationManager.authenticate(authToken);
+            return auth;
+        } catch (Exception e) {
+            response.setStatus(401);
+            System.out.println(e);
+            return null;
+
+        }
+//        return authenticationManager.authenticate(authToken);
+
     }
 
     // 로그인 성공시 실행하는 메소드 (여기서 JWT 를 발급)
     @Override
     protected void successfulAuthentication(
-            HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication
+   ) {
         // UserDetails
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -55,12 +73,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role, (long) 60*60*24*7);
         response.addHeader("Authorization", "Bearer " + token);
-
     }
-//
-//    @Override
-//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-//        //로그인 실패시 401 응답 코드 반환
-//        response.setStatus(401);
-//    }
+
 }

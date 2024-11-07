@@ -22,15 +22,8 @@ public class JoinController {
     @PostMapping("/join")
     public String joinProcess(@RequestBody JoinDTO joinDTO) {
 
-        UserEntity result = joinService.JoinProcess(joinDTO);
+        return joinService.JoinProcess(joinDTO);
 
-
-        if (result == null) {
-            return "fail";
-        }
-        else {
-            System.out.println(result.getUsername());
-            return "ok";
         }
     }
-}
+
