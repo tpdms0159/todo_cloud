@@ -1,17 +1,20 @@
 import styled from "styled-components";
 
 interface WrapperProps {
-    padding? : string,
-    flexDirection? : string,
-    justifyContent? : string
-
+  padding?: string;
+  flexDirection?: string;
+  justifyContent?: string;
+  color?: string;
 }
 
 // flex, flex-direction, justify-content 설정 기본 스타일
 export const Wrapper = styled.div<WrapperProps>`
-    padding: ${({padding}) => (padding ? padding : '2rem')};
-    display: flex;
-    flex-direction: ${({flexDirection}) => (flexDirection ? flexDirection : 'row')};
-    justify-content: ${({justifyContent}) => (justifyContent ? justifyContent : 'space-between')};
-    color: white;
-`
+  padding: ${({ padding }) => (padding ? padding : "2rem")};
+  display: flex;
+  /* align-items: center; */
+  flex-direction: ${({ flexDirection }) =>
+    flexDirection ? flexDirection : "row"};
+  justify-content: ${({ justifyContent }) =>
+    justifyContent ? justifyContent : "space-between"};
+  color: ${({ color }) => (color ? color : "white")};
+`;
