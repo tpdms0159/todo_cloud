@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @ResponseBody
+@CrossOrigin({"localhost:3000"})
 public class MainController {
 
     @GetMapping("/")

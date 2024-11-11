@@ -48,7 +48,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             return auth;
         } catch (Exception e) {
             response.setStatus(401);
-            System.out.println(e);
             return null;
 
         }

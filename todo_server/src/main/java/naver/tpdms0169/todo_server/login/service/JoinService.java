@@ -1,5 +1,6 @@
 package naver.tpdms0169.todo_server.login.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import naver.tpdms0169.todo_server.login.DTO.JoinDTO;
 import naver.tpdms0169.todo_server.login.Repository.UserRepository;
 import naver.tpdms0169.todo_server.login.Entity.UserEntity;
@@ -10,10 +11,12 @@ import org.springframework.stereotype.Service;
 public class JoinService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final HttpServletResponse httpServletResponse;
 
-    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, HttpServletResponse httpServletResponse) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.httpServletResponse = httpServletResponse;
     }
 
     public String JoinProcess (JoinDTO joinDTO) {
@@ -26,6 +29,7 @@ public class JoinService {
         Boolean isExist = userRepository.existsByUsername(username);
         // 중복되는 username 존재 시 종료
         if (isExist) {
+
             return "user is already exist";
         }
 

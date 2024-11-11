@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @ResponseBody
 @RequestMapping("/todo")
+@CrossOrigin({"localhost:3000"})
 public class CRUDController {
 
     CRUDService crudService;

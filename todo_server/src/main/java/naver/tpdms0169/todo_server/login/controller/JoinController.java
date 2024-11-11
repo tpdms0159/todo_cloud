@@ -4,13 +4,11 @@ import naver.tpdms0169.todo_server.login.DTO.JoinDTO;
 import naver.tpdms0169.todo_server.login.Entity.UserEntity;
 import naver.tpdms0169.todo_server.login.service.JoinService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @ResponseBody
+@CrossOrigin({"localhost:3000"})
 public class JoinController {
     private final JoinService joinService;
 
