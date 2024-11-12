@@ -40,6 +40,7 @@ export const Title = styled.div<TitleProps>`
   width: 100%;
   font-size: 1rem;
   border-bottom: ${({ border }) => (border ? "" : "solid 1px black")};
+  cursor: pointer;
 `;
 
 export const SubBox = styled.div<SubBoxProps>`

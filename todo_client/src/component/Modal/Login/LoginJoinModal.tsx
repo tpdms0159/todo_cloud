@@ -2,17 +2,21 @@ import React, { useState } from "react";
 import ReactModal from "react-modal";
 import { MyReactModal } from "./LoginJoinModalStyle.tsx";
 import InputComponent from "./InputComponent/InputComponent.tsx";
+import useModalStore from "../../../variable/useModalStore.tsx";
 
-interface LoginJoinModalProps {
-  loginOrJoin : string
-}
+function LoginJoinModal() {
+  const {loginState, joinState, setLoginState, setJoinState} = useModalStore(state=>state);
+  const loginOrJoin = loginState && joinState ? "join" : "login";
 
-function LoginJoinModal({loginOrJoin} : LoginJoinModalProps) {
-  const [modalOpen, setModalOpen] = useState(true);
+  console.log("login state:" , loginState);
 
   return (
-    <ReactModal isOpen={modalOpen} style={MyReactModal}>
-      <InputComponent loginOrJoin={loginOrJoin} setModal={setModalOpen} />
+    <ReactModal 
+    isOpen={loginState || joinState} 
+    style={MyReactModal}
+    shouldCloseOnOverlayClick={true}
+    onRequestClose={()=> {setLoginState(false) ; setJoinState(false)}}>
+      <InputComponent loginOrJoin={loginOrJoin} />
     </ReactModal>
   );
 }

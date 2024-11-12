@@ -9,6 +9,8 @@ import naver.tpdms0169.todo_server.CRUD.Repository.CRUDRepository;
 import naver.tpdms0169.todo_server.login.Entity.UserEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,12 +24,18 @@ public class CRUDService  {
     }
 
     // create api
-    public Boolean createTodo (CreateUpdateDTO createDTO) {
+    public Boolean createTodo (CreateUpdateDTO createDTO) throws ParseException {
+        System.out.println(createDTO.getTitle());
         String username = createDTO.getUsername();
         String title = createDTO.getTitle();
         String text = createDTO.getText();
         String state = "none";
         String show_yn = "N";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일");
+        Date deadline = formatter.parse(createDTO.getDeadline());
+
+
+        System.out.println("deadline:" + deadline);
 
         if (username == null || title == null || text == null) {
             return false;
@@ -37,6 +45,7 @@ public class CRUDService  {
         todo.setUsername(username);
         todo.setTitle(title);
         todo.setText(text);
+        todo.setDeadline(deadline);
         todo.setState(state);
         todo.setShow_yn(show_yn);
 

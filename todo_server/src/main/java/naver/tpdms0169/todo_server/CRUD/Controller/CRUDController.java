@@ -6,6 +6,7 @@ import naver.tpdms0169.todo_server.CRUD.DTO.GetTodo;
 import naver.tpdms0169.todo_server.CRUD.Service.CRUDService;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -14,15 +15,17 @@ import java.util.List;
 @CrossOrigin({"localhost:3000"})
 public class CRUDController {
 
+
     CRUDService crudService;
     public CRUDController (CRUDService crudService) {
         this.crudService = crudService;
+        System.out.println("crud controller");
     }
 
     // create
     @PostMapping("/create")
     public Boolean createTodo (
-            @RequestBody CreateUpdateDTO createDTO) {
+            CreateUpdateDTO createDTO) throws ParseException {
 
         return crudService.createTodo(createDTO);
     }

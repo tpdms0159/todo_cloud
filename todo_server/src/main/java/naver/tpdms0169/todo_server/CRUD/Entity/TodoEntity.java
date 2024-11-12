@@ -7,7 +7,9 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 @Entity
@@ -24,6 +26,8 @@ public class TodoEntity {
     private String text;
     private String state;
     private String show_yn;
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private Date deadline;
 
     @UpdateTimestamp
     private Date createDate;

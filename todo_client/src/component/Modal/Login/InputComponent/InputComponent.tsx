@@ -4,14 +4,15 @@ import { InputText, InputWrapper, Label, Title, Button } from "./InputComponentS
 import PostLoginApi from "../../../../API/PostLoginApi.tsx";
 import PostJoinApi from "../../../../API/PostJoinApi.tsx";
 import useAuthStore from "../../../../variable/useAuthStore.tsx";
+import useModalStore from "../../../../variable/useModalStore.tsx";
 
 interface InputComponentProps {
   loginOrJoin?: string;
-  setModal: (value: boolean) => void;
 }
 
-function InputComponent({ loginOrJoin, setModal }: InputComponentProps) {
-  const { login } = useAuthStore(state=>state);
+function InputComponent({ loginOrJoin }: InputComponentProps) {
+  const { login, setUsername } = useAuthStore(state=>state);
+  const {setLoginState, setJoinState} = useModalStore(state=>state);
   const labels =
     loginOrJoin == "login"
         ? ["username", "password"]
@@ -30,15 +31,21 @@ function InputComponent({ loginOrJoin, setModal }: InputComponentProps) {
         .then((res) => {
           const myToken = res.headers['authorization'].split(' ');
           login(myToken[1]);
-          setModal(false)})
+          setUsername(Info.username);
+          setLoginState(false)})
         .catch((err) => console.log(err));     
     }
 
     const OnJoin = async() => {
+      if (loginOrJoin === "login") {
+       
+        setJoinState(true);
+        return;
+      }
       const result = PostJoinApi(Info.username, Info.password)
 
       if (await result === "join success") {
-          setModal(false);
+          setJoinState(false);
       }
       else {
         console.log(result)
@@ -58,8 +65,9 @@ function InputComponent({ loginOrJoin, setModal }: InputComponentProps) {
         );
       })}
       <InputWrapper style={{alignItems: "center", width: "100%"}}>
-       {loginOrJoin == "login" ? <Button onClick={() => OnLogin()}>LOGIN</Button> : null }
-       {loginOrJoin == "join" ? <Button onClick={OnJoin}>SIGN UP</Button> : null}
+       {loginOrJoin == "login" ? <Button onClick={OnLogin}>LOGIN</Button> : null }
+       
+       <Button onClick={ OnJoin }>SIGN UP</Button>
        </InputWrapper>
     </InputWrapper>
   );

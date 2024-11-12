@@ -5,6 +5,9 @@ interface AuthState {
   token: string | null;
   login: (token: string) => void;
   logout: () => void;
+
+  username: string;
+  setUsername: (value:string) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -20,6 +23,11 @@ const useAuthStore = create<AuthState>((set) => ({
     sessionStorage.removeItem("token");
     set({ isAuthenticated: false });
   },
+
+  username: "",
+  setUsername:(value: string) =>{
+    set({username: value});
+  }
 }));
 
 export default useAuthStore;

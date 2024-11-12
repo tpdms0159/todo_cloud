@@ -16,8 +16,9 @@ function HomePage() {
       <TodoArea />
       {/* todo area */}
 
-      {/* <LoginJoinModal loginOrJoin="login"/> */}
+      <LoginJoinModal/>
       <NewTodoModal/>
+      
     </div>
   );
 }

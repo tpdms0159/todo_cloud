@@ -31,6 +31,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorization= request.getHeader("Authorization");
         String requestUsername = request.getParameter("username");
         System.out.println("request user:" + requestUsername);
+        System.out.println("request token:" + authorization);
 
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -49,22 +50,13 @@ public class JWTFilter extends OncePerRequestFilter {
             System.out.println("token expired");
             filterChain.doFilter(request, response);
             return;
-//            try {
-//                filterChain.doFilter(request, response);
-//                return;
-//            } catch (ServletException e) {
-//                System.out.println(e);
-//                return;
-//            }
 
             //조건이 해당되면 메소드 종료 (필수)
         }
 
-
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
 
-        System.out.println("username:" + username);
         // 해당 유저에 일치하는 토큰이 아닌 경우 처리
         if (!username.equals(requestUsername)) {
             response.setStatus(401);
@@ -84,9 +76,11 @@ public class JWTFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
             System.out.println("token success");
+            return;
         }catch (Exception e) {
             System.out.println(e);
             System.out.println("token failed");
+            return;
 
         }
     }
