@@ -37,7 +37,7 @@ const useModalStore = create<ModalState>((set) => ({
         sessionStorage.setItem("newTodoState", val);
     },
     
-    detailTodoState:false,
+    detailTodoState: sessionStorage.getItem("detailTodoState") === "true",
     setDetailTodoState:(value:boolean) => {
         set({detailTodoState: value});
         const val: string = value ? "true" : "false";

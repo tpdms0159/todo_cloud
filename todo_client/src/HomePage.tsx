@@ -5,6 +5,7 @@ import DateFilter from "./component/DateFilter/DateFilter.tsx";
 import TodoArea from "./component/TodoArea/TodoArea.tsx";
 import LoginJoinModal from "./component/Modal/Login/LoginJoinModal.tsx";
 import NewTodoModal from "./component/Modal/NewTodo/NewTodoModal.tsx";
+import DetailTodoModal from "./component/Modal/DetailTodo/DetailTodoModal.tsx";
 
 function HomePage() {
   return (
@@ -17,7 +18,8 @@ function HomePage() {
       {/* todo area */}
 
       <LoginJoinModal/>
-      <NewTodoModal/>
+      <NewTodoModal />
+      <DetailTodoModal/>
       
     </div>
   );
