@@ -2,6 +2,7 @@ package naver.tpdms0169.todo_server.CRUD.Controller;
 
 import naver.tpdms0169.todo_server.CRUD.DTO.CreateUpdateDTO;
 import naver.tpdms0169.todo_server.CRUD.DTO.DeleteDTO;
+import naver.tpdms0169.todo_server.CRUD.DTO.GetRequestDTO;
 import naver.tpdms0169.todo_server.CRUD.DTO.GetTodo;
 import naver.tpdms0169.todo_server.CRUD.Service.CRUDService;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,8 @@ public class CRUDController {
     // create
     @PostMapping("/create")
     public Boolean createTodo (
-            CreateUpdateDTO createDTO) throws ParseException {
+            CreateUpdateDTO createDTO){
+        System.out.println(createDTO.getTitle());
 
         return crudService.createTodo(createDTO);
     }
@@ -33,25 +35,28 @@ public class CRUDController {
     // read
     @GetMapping("/read")
     public List<GetTodo> readTodo (
-            @RequestParam String username
-    ) {
-        return crudService.readTodo(username);
+            GetRequestDTO getRequestDTO
+
+    ) throws ParseException {
+        return crudService.readTodo(getRequestDTO.getUsername(), getRequestDTO.getDeadline());
     }
 
     //update
     @PostMapping("/update")
     public Boolean updateTodo (
-            @RequestBody GetTodo getTodo
+            GetTodo getTodo
     ){
+        System.out.println(getTodo.getId());
         return crudService.updateTodo(getTodo);
     }
 
     // delete
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public String deleteTodo (
-            @RequestBody DeleteDTO deleteDTO
+            DeleteDTO deleteDTO
     ){
 
+        System.out.println(deleteDTO.getId());
         return crudService.deleteTodo(deleteDTO);
     }
 }

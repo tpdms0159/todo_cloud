@@ -11,7 +11,7 @@ export const Title = styled.p`
   font-size: 1.5rem;
   font-weight: 800;
   text-align: center;
-`
+`;
 export const Label = styled.div`
   font-size: 1rem;
   font-weight: 500;
@@ -23,6 +23,8 @@ export const InputText = styled.input`
   border: none;
   border-bottom: solid 2px grey;
   background-color: none;
+  padding: 1rem;
+  font-size: 1rem;
 `;
 
 export const Button = styled.div`

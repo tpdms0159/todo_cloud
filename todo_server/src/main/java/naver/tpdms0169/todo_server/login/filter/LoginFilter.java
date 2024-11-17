@@ -70,7 +70,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // role 가져오기
         String role = auth.getAuthority();
-        String token = jwtUtil.createJwt(username, role, (long) 60*60*24*7);
+        String token = jwtUtil.createJwt(username, role, (long) 7 * 24 * 60 * 60 * 1000);
         response.addHeader("Authorization", "Bearer " + token);
     }
 

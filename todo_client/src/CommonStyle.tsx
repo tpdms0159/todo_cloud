@@ -11,7 +11,7 @@ interface WrapperProps {
 export const Wrapper = styled.div<WrapperProps>`
   padding: ${({ padding }) => (padding ? padding : "2rem")};
   display: flex;
-  /* align-items: center; */
+
   flex-direction: ${({ flexDirection }) =>
     flexDirection ? flexDirection : "row"};
   justify-content: ${({ justifyContent }) =>

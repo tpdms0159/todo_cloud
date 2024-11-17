@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import ReactModal from "react-modal";
 
+interface MyReactModalProps {
+  width?: string;
+}
 export const MyReactModal = (ReactModal.defaultStyles = {
   overlay: {
     backgroundColor: "rgba(0,0,0,0.5)",

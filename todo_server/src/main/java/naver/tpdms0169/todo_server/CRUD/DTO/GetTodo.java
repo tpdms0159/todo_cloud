@@ -14,8 +14,7 @@ public class GetTodo {
     private String title;
     private String text;
     private String state;
-    private String show_yn;
 
-    private Date createDate;
+    private String deadline;
 
 }

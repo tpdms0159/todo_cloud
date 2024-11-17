@@ -6,8 +6,8 @@ interface AuthState {
   login: (token: string) => void;
   logout: () => void;
 
-  username: string;
-  setUsername: (value:string) => void;
+  username: string | null;
+  setUsername: (value: string) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -24,10 +24,11 @@ const useAuthStore = create<AuthState>((set) => ({
     set({ isAuthenticated: false });
   },
 
-  username: "",
-  setUsername:(value: string) =>{
-    set({username: value});
-  }
+  username: sessionStorage.getItem("username"),
+  setUsername: (value: string) => {
+    set({ username: value });
+    sessionStorage.setItem("username", value);
+  },
 }));
 
 export default useAuthStore;

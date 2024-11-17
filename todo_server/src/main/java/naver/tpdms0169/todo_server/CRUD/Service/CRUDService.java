@@ -9,6 +9,7 @@ import naver.tpdms0169.todo_server.CRUD.Repository.CRUDRepository;
 import naver.tpdms0169.todo_server.login.Entity.UserEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,25 +19,32 @@ import java.util.List;
 @Service
 public class CRUDService  {
     CRUDRepository crudRepository;
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일");
 
     public CRUDService (CRUDRepository crudRepository) {
         this.crudRepository = crudRepository;
     }
 
     // create api
-    public Boolean createTodo (CreateUpdateDTO createDTO) throws ParseException {
+    public Boolean createTodo (CreateUpdateDTO createDTO) {
         System.out.println(createDTO.getTitle());
         String username = createDTO.getUsername();
         String title = createDTO.getTitle();
         String text = createDTO.getText();
         String state = "none";
-        String show_yn = "N";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일");
-        Date deadline = formatter.parse(createDTO.getDeadline());
+        String show_yn = "Y";
 
+        // 날짜 형식 변환
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일");
+        Date deadline;
+        try {
+            deadline = formatter.parse(createDTO.getDeadline());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         System.out.println("deadline:" + deadline);
-
+        // 빠진 값이 있을 경우 return
         if (username == null || title == null || text == null) {
             return false;
         }
@@ -55,18 +63,21 @@ public class CRUDService  {
         } catch (Exception e) {
             return false;
         }
-
-
-
-
     }
 
     // read api
-    public List<GetTodo> readTodo (String username) {
+    public List<GetTodo> readTodo (String username, String deadline) {
         System.out.println("username:" + username);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일");
+        Date dateDeadline;
+        try {
+            dateDeadline = formatter.parse(deadline);
+            System.out.println(dateDeadline);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
-        List<TodoEntity> result = crudRepository.findByUsername(username);
-
+        List<TodoEntity> result = crudRepository.getTodo(username, dateDeadline);
         int length = result.size();
         List<GetTodo> data = new ArrayList<>();
 
@@ -74,8 +85,10 @@ public class CRUDService  {
             return new ArrayList<GetTodo>();
         }
 
+        System.out.println(result.get(0).getShow_yn());
+        // entity ->dto
         for (int i = 0; i < length; i++) {
-            if (result.get(i).getShow_yn() != "N") {
+            if (result.get(i).getShow_yn().equals("Y")) {
                 GetTodo get = new GetTodo();
 
                 get.setId(result.get(i).getId());
@@ -83,62 +96,75 @@ public class CRUDService  {
                 get.setTitle(result.get(i).getTitle());
                 get.setText(result.get(i).getText());
                 get.setState(result.get(i).getState());
-                get.setShow_yn(result.get(i).getShow_yn());
-                get.setCreateDate(result.get(i).getCreateDate());
+                get.setDeadline(formatter.format(result.get(i).getDeadline()));
 
                 data.add(get);
             }
         }
-
         return data;
     }
 
     // update api
+    // 상태, deadline 수정
     public Boolean updateTodo (GetTodo getTodo) {
         Long id = getTodo.getId();
         String username = getTodo.getUsername();
 
         // 해당하는 게시글 존재 여부 확인하기
         Boolean isExist = crudRepository.existsByIdAndUsername(id, username);
+        Date dateDeadline;
+
+        // string -> date 형 변환
+        try {
+            dateDeadline = formatter.parse(getTodo.getDeadline());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         if (!isExist) {
             return null;
         }
 
-        // 해당 게시글 업데이트하기
-        TodoEntity update = new TodoEntity();
-        update.setId(getTodo.getId());
-        update.setTitle(getTodo.getTitle());
-        update.setText(getTodo.getText());
-        update.setState(getTodo.getState());
-        update.setShow_yn(getTodo.getShow_yn());
-        update.setCreateDate(new Date());
+        int result = crudRepository.updateTodo(
+                getTodo.getId(),
+                getTodo.getUsername(),
+                getTodo.getTitle(),
+                getTodo.getText(),
+                getTodo.getState(),
+                dateDeadline
+        );
 
-        crudRepository.save(update);
-
+        System.out.println(result);
         return true;
     }
 
-
     // delete api
     public String deleteTodo (DeleteDTO deleteDTO) {
+        System.out.println("delete id: " + deleteDTO.getId().toString());
         // 해당 게시글이 있는지 확인
-        Boolean exist = crudRepository.existsById(deleteDTO.getId());
+        Boolean exist = crudRepository.existsById(Long.parseLong(deleteDTO.getId()));
+
+
         // 없으면 return
         if(!exist) {
             return "No todo";
         }
 
         // 사용자와 작성자가 동일한 경우 삭제 진행
-        String writter = crudRepository.findById(deleteDTO.getId()).getUsername();
+//        System.out.println(crudRepository.findById(deleteDTO.getId()).get().getUsername());
+        String writter = crudRepository.findById(deleteDTO.getId()).get().getUsername();
 
         if (!writter.equals(deleteDTO.getUsername())) {
             return "writter and username do not equal";
         }
 
         // 있으면 삭제
+        System.out.println("delete todo? ");
+
         try {
-            crudRepository.deleteById(deleteDTO.getId().toString());
+            int result = crudRepository.deleteTodo( Long.parseLong(deleteDTO.getId()) );
+            System.out.println(result);
+
             return "delete success";
         } catch (Exception e) {
             return "delete fail";

@@ -37,11 +37,12 @@ export const InfoBox = styled.div<InfoBoxProps>`
   background-color: ${({ backgroundColor }) =>
     backgroundColor ? backgroundColor : "rgba(249, 0, 4, 0.5)"};
 `;
-export const TextWrapper = styled.div`
+export const TextWrapper = styled.textarea`
   text-align: start;
   width: 80%;
   padding: 20px 0;
   min-height: 50%;
+  border: none;
 `;
 export const Button = styled.button`
   border-radius: 10px;
